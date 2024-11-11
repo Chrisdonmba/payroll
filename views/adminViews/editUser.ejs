@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../snippets/headers.ejs') %>
+
+    <body>
+        <div class="dash_Box">
+            <i class="fa-solid fa-list toggle_btn text-white p-3 h3 shadow"></i>
+
+            <!-- side menu -->
+            <%- include('../snippets/sidebar.ejs') %>
+
+                <!-- main section -->
+                <section class="main p-3 p-md-4">
+                    <main>
+                        <div class="mini_profile rounded p-3">
+                            <header class="head_nav d-md-flex justify-content-between align-items-center">
+                                <a href="javascript:void(0)" class="text-decoration-none text-dark text-white">/
+                                    User Profile</a>
+
+                            </header>
+                            <% if (context.user) { %>
+                                <div class="mini_info">
+                                    <div class="figure">
+                                        <div class="image "><img src="./dist/images/many.jpg" alt="" class="rounded">
+                                        </div>
+                                        <span>
+                                            <p class="h5">
+                                                <%= context.user.fName %>
+                                                    </h2>
+                                            </p>
+
+                                        </span>
+                                    </div>
+                                    <p class="d-flex align-items-center gap-2"><i class="fa-solid fa-envelope"></i>
+                                        <%= context.user.email %>
+                                            </h2>
+                                    </p>
+                                </div>
+                                <% } %>
+                        </div>
+
+                        <div class="update_section d-lg-flex w-100 justify-content-between gap-3  ">
+                            <!-- update profile -->
+                            <div class="profile_update w-100 bg-white p-3 rounded shadow">
+                                <% if (context.user) { %>
+                                    <form id="editUser">
+                                        <input type="text" name="fName" id="name" class="form-control mt-4"
+                                            placeholder="Full Name" value="<%= context.user.fName %>" />
+                                        <div class="fNameErr error"></div>
+
+                                        <div class="form-group mt-3 d-md-flex justify-content-between gap-3">
+                                            <input type="email" name="email" id="email" class="form-control"
+                                                placeholder="xyz@gmail.com" value="<%= context.user.email %>" />
+                                            <div class="emailErr error"></div>
+
+                                            <input type="number" name="phone" id="phone"
+                                                class="form-control mt-3 mt-md-0" placeholder="0900
+                                        000 0000" value="<%= context.user.phone %>" />
+                                            <div class="phoneErr error"></div>
+                                        </div>
+
+                                        <input type="hidden" name="user_id" value="<%= context.user._id %>" class="form-control">
+
+                                        <div class="form-group mt-3 d-md-flex justify-content-between gap-3">
+                                            <input type="date" name="dob" id="start_date" class="form-control"
+                                                value="<%= context.user.dob %>" />
+                                            <div class="dobErr error"></div>
+                                            <input type="number" name="age" id="age" class="form-control mt-3 mt-md-0"
+                                                placeholder="23yrs" value="<%= context.user.age %>" />
+                                            <div class="ageErr error"></div>
+                                            <input type="text" name="salary" id="salary"
+                                                class="form-control mt-3 mt-md-0" placeholder="&#8358;162,700"
+                                                value="<%= context.user.salary %>" />
+                                            <div class="salaryErr error"></div>
+                                        </div>
+
+                                        <div class="form-group mt-3 d-flex gap-3 mt-md-2">
+
+                                            <select name="department" id="department" class="form-control mt-3 mt-md-0">
+                                                <option value="<%= context.user.department.id %>">
+                                                    <%= context.user.department.name %>
+                                                </option>
+                                                <% if (context.departments) { %>
+                                                    <% context.departments.forEach(department=> { %>
+                                                        <option value="<%= department.id %>">
+                                                            <%= department.name %>
+                                                        </option>
+                                                        <% }) %>
+                                                            <% } %>
+                                            </select>
+                                            <div class="depatErr error"></div>
+
+                                            <select name="position" id="position" class="form-control mt-3 mt-md-0">
+                                                <option value="<%= context.user.position.id %>"><%= context.user.position.name %></option>
+                                                    <% if (context.positions) { %>
+                                                    <% context.positions.forEach(position=> { %>
+                                                    <option value="<%= position.id %>"><%= position.name %></option>
+                                                    <% }) %>
+                                                    <% } %> 
+                                            </select>
+                                            <div class="posiErr error"></div>
+
+                                            <select id="inputState" name="gender" class="form-select">
+                                                <option value="<%= context.user.gender %>"><%= context.user.gender %></option>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                            </select>
+                                            <div class="genderErr error"></div>
+                                        </div>
+
+
+                                        <div class="form-group mt-4">
+                                            <button type="submit" class="btn btn-gradient text-white">
+                                                Update Profile
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <% } %>
+                            </div>
+                        </div>
+                    </main>
+                </section>
+        </div>
+
+        <%- include('../snippets/toast.ejs') %>
+            <%- include('../snippets/script.ejs') %>
+            <script src="/formHandler/editUser.js"></script>
+
+                <script>
+                    new DataTable("#example", {
+                        scrollX: true,
+                    });
+                </script>
+    </body>
+
+</html>

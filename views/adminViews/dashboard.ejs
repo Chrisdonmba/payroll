@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+    <%- include('../snippets/headers.ejs') %>
+
+  <body>
+    <div class="dash_Box">
+      <i class="fa-solid fa-list toggle_btn text-white p-3 h3 shadow"></i>
+
+      <!-- side menu -->
+      <%- include('../snippets/sidebar.ejs') %>
+
+      <!-- main section -->
+      <section class="main p-3 p-md-4">
+        <main>
+          <header
+            class="head_nav d-md-flex justify-content-between align-items-center"
+          >
+            <a href="javascript:void(0)" class="text-decoration-none text-dark"
+              >/ Dashboard</a
+            >
+            <!-- <div class="d-flex align-items-center gap-3">
+              <input
+                type="search"
+                name="search"
+                id="dearch"
+                placeholder="Search"
+                class="form-control"
+              />
+              <a href="./dash-profile.html" class="text-decoration-none text-dark"
+                ><i class="fa-solid fa-user"></i
+              ></a>
+            </div> -->
+          </header>
+
+          <section class="summary_info mt-4">
+            <div
+              class="informations d-flex justify-content-between align-items-center rounded shadow bg-white p-2 mt-4 mt-md-0"
+            >
+              <span class="d-flex flex-column info">
+                <p>Number of employees</p>
+                <p class="h4"><%= registeredUserCount %></p>
+              </span>
+              <i class="fa-solid fa-helmet-safety p-3 rounded text-white"></i>
+            </div>
+
+            <div
+              class="info d-flex justify-content-between align-items-center informations rounded shadow bg-white p-2 mt-4 mt-md-0"
+            >
+              <span class="d-flex flex-column info">
+                <p>Roles assigned</p>
+                <p class="h4"><%= registeredPositionCount %></p>
+              </span>
+              <i class="fa-solid fa-briefcase p-3 rounded text-white"></i>
+            </div>
+
+            <div
+              class="info d-flex justify-content-between align-items-center informations rounded shadow bg-white p-2 mt-4 mt-md-0"
+            >
+              <span class="d-flex flex-column info">
+                <p>Departments</p>
+                <p class="h4"><%= registeredDepartmentCount %></p>
+              </span>
+              <i class="fa-solid fa-building-user p-3 rounded text-white"></i>
+            </div>
+          </section>
+
+          <section
+            class="data_section mt-5 d-lg-flex justify-content-between gap-4"
+          >
+            <!-- chart -->
+             <section class="chart_cont bg-white p-3 rounded shadow">
+              <header class="h5">Employee Earnings</header>
+              <div class="chart mx-auto">
+                <canvas id="myChart" width="400" height="400"></canvas>
+              </div>
+             </section>
+
+
+            <!-- transaction histories log-->
+            <div
+              class="transacrion_history bg-white rounded p-3 mt-4 mt-lg-0 shadow"
+            >
+              <header class="d-flex justify-content-between">
+                <p>Transaction history</p>
+                <a href="/admin/payroll">See all</a>
+              </header>
+              
+              <div class="histories">
+                <!-- transaction history  -->
+                
+                <div class="transactions">
+                  <% if (context.payments && context.payments.length > 0) { %>
+                    <% context.payments.forEach(payment => { %>
+                      <div class="transaction d-flex justify-content-between p-3 mb-2 border-bottom"> <!-- Wrapper for each transaction -->
+                        <div class="employee_info">
+                          <span class="employee_name fw-bold"><%= payment.user.fName %></span> <!-- Render user's name -->
+                          <span><%= payment.user.role %></span> <!-- Render user's role or position -->
+                        </div>
+                
+                        <div class="amount text-right">
+                          <span>&#8358;<%= payment.amount %></span> <!-- Render payment amount -->
+                          <br>
+                          <span class="text-muted"><%= new Date(payment.date).toLocaleDateString() %></span> <!-- Format the payment date -->
+                        </div>
+                      </div>
+                    <% }) %>
+                  <% } else { %>
+                    <p>No payments available.</p> <!-- Fallback if no payments are found -->
+                  <% } %>
+                </div>
+                                
+               
+              </div>
+              
+            </div>
+          </section>
+        </main>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <%- include('../snippets/toast.ejs') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      // Fetch salary data from the server
+      fetch('/admin/get-salaries')
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      .then(data => {
+          // Extract data received from the server
+          const salariesForChart = data.salariesForChart;
+          const userNamesForChart = data.userNamesForChart;
+  
+          // Chart options
+          const ctx = document.getElementById("myChart");
+          new Chart(ctx, {
+              type: "doughnut",
+              data: {
+                  labels: userNamesForChart, // User names as labels
+                  datasets: [{
+                      label: "Salaries",
+                      data: salariesForChart, // Salary data from the server
+                      backgroundColor: [
+                          "rgb(242, 38, 19)",
+                          "rgb(54, 162, 235)",
+                          "rgb(46, 204, 113)",
+                          "rgb(255, 206, 86)",
+                          "rgb(75, 192, 192)",
+                          "rgb(153, 102, 255)",
+                          "rgb(255, 159, 64)"
+                      ],
+                      hoverOffset: 7,
+                  }],
+              },
+              options: {
+                  title: {
+                      display: true,
+                      text: "Employees' Salaries",
+                      fontSize: 20
+                  },
+                  responsive: true,
+                  maintainAspectRatio: false
+              }
+          });
+      })
+      .catch(error => {
+          console.error('Error fetching data:', error);
+      });
+  </script>
+    
+  </body>
+</html>

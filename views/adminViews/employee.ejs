@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../snippets/headers.ejs') %>
+
+  <body>
+    <div class="dash_Box">
+      <i class="fa-solid fa-list toggle_btn text-white p-3 h3 shadow"></i>
+
+      <!-- side menu -->
+      <%- include('../snippets/sidebar.ejs') %>
+
+        <!-- main section -->
+        <section class="main p-3 p-md-4">
+          <main>
+            <header class="head_nav d-md-flex justify-content-between align-items-center">
+              <a href="javascript:void(0)" class="text-decoration-none text-dark">/ Dashboard</a>
+              <!-- <div class="d-flex align-items-center gap-3">
+                <input type="search" name="search" id="dearch" placeholder="Search..." class="form-control" />
+                <a href="/admin/profile" class="text-decoration-none text-dark"><i class="fa-solid fa-user"></i></a>
+              </div> -->
+            </header>
+
+            <!-- data table here -->
+            <section class="data_table bg-white p-3 rounded mt-5">
+              <!-- add to payroll -->
+              <div class="add_opt">
+                <button class="btn add_btn text-white" id="pay-selected-users">
+                  Pay All Users
+                </button>
+              </div>
+
+              <div class="table_dsp mt-5 table-responsive">
+                <table id="example" class="display" style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th><input type="checkbox" class="select_all"></th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Gender</th>
+                      <th>Age</th>
+                      <th>Salary</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (context.users) { %>
+                      <% context.users.forEach(user=> { %>
+                        <tr>
+                          <td><input type="checkbox" class="select_employee" /></td>
+                          <td>
+                            <%= user.fName %>
+                          </td>
+                          <td>
+                            <%= user.email %>
+                          </td>
+                          <td>
+                            <%= user.phone %>
+                          </td>
+                          <td>
+                            <%= user.gender %>
+                          </td>
+                          <td>
+                            <%= user.age %>
+                          </td>
+                          <td class="user-salary" data-user-id="<%= user._id %>">
+                            <%= user.salary %>
+                          </td>
+                          <!-- actions button -->
+                          <td class="dropdown">
+                            <span class="btn atn-btn dropdown-toggle" type="button" id="dropdownMenuButton"
+                              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                            <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton">
+                              <a href="/admin/edit-user/?user_id=<%= user._id %>" type="button"
+                                class="btn btn-primary w-100">
+                                Edit
+                              </a>
+                              <br />
+                              <button type="button" class="btn btn-danger w-100 mt-2"
+                           onclick="return deleteUser('<%= user._id %>')"> 
+                            Delete
+                          </button>
+                            </div>
+                          </td>
+                        </tr>
+                        <% }) %>
+                          <% } %>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Gender</th>
+                      <th>Age</th>
+                      <th>Salary</th>
+                      <th>Actions</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <!-- end of table -->
+              <!-- add new employee -->
+              <div class="add_opt w-100 d-flex justify-content-end mt-5">
+                <button type="button" class="btn add_btn text-white" data-toggle="modal" data-target="#addNewEmployee">
+                  <i class="fa-solid fa-plus"></i> New Employee
+                </button>
+              </div>
+              <!-- end of add new employee -->
+            </section>
+
+            <!-- form modals are grouped here -->
+
+            <!-- Modal for editing a row i.e single employee data -->
+
+            <!-- new employee modal -->
+
+            <div class="modal fade" id="addNewEmployee" tabindex="-1" role="dialog" aria-labelledby="addNewEmployee"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3>Add new employee</h3>
+                  </div>
+                  <div class="modal-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home"
+                          type="button" role="tab" aria-controls="home" aria-selected="true">
+                          Single Upload
+                        </button>
+                      </li>
+                      <li class="nav-item mt-3" role="presentation">
+                        <form id="multiMultiplpleUser" enctype="multipart/form-data">
+                          <div class="mb-3">
+                            <button id="download-template-btn" onclick="return downloadExcelSheet()"
+                              class="btn btn-secondary">Download Template</button>
+                            <input type="file" id="upload-file-input" class="btn btn-primary" accept=".xlsx, .xls">
+                            <button type="submit" id="upload-btn" class="btn btn-primary">Upload</button>
+                          </div>
+                        </form>
+                      </li>
+                    </ul>
+
+                    <!-- for single upload -->
+                    <div class="tab-content" id="myTabContent">
+                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <form id="registerUser">
+                          <input type="text" name="fName" id="name" class="form-control mt-4" placeholder="Full Name" />
+                          <div class="fNameErr error"></div>
+
+                          <div class="form-group mt-3 d-md-flex justify-content-between gap-3">
+                            <input type="email" name="email" id="email" class="form-control"
+                              placeholder="xyz@gmail.com" />
+                            <div class="emailErr error"></div>
+
+                            <input type="number" name="phone" id="phone" class="form-control mt-3 mt-md-0" placeholder="0900
+                          000 0000" />
+                            <div class="phoneErr error"></div>
+                          </div>
+
+                          <div class="form-group mt-3 d-md-flex justify-content-between gap-3">
+                            <input type="date" name="dob" id="start_date" class="form-control" />
+                            <div class="dobErr error"></div>
+                            <input type="number" name="age" id="age" class="form-control mt-3 mt-md-0"
+                              placeholder="23yrs" />
+                            <div class="ageErr error"></div>
+                            <input type="text" name="salary" id="salary" class="form-control mt-3 mt-md-0"
+                              placeholder="&#8358;162,700" />
+                            <div class="salaryErr error"></div>
+                          </div>
+
+                          <div class="form-group mt-3 d-flex gap-3 mt-md-2">
+
+                            <select name="department" id="department" class="form-control mt-3 mt-md-0">
+                              <option value="">Select Department</option>
+                              <% if (context.departments) { %>
+                                <% context.departments.forEach(department=> { %>
+                                  <option value="<%= department.id %>">
+                                    <%= department.name %>
+                                  </option>
+                                  <% }) %>
+                                    <% } %>
+                            </select>
+                            <div class="depatErr error"></div>
+
+                            <select name="position" id="position" class="form-control mt-3 mt-md-0">
+                              <option value="">Select Position</option>
+                              <% if (context.positions) { %>
+                                <% context.positions.forEach(position=> { %>
+                                  <option value="<%= position.id %>">
+                                    <%= position.name %>
+                                  </option>
+                                  <% }) %>
+                                    <% } %>
+                            </select>
+                            <div class="posiErr error"></div>
+
+                            <select id="inputState" name="gender" class="form-select">
+                              <option value="">Select Gender</option>
+                              <option>Male</option>
+                              <option>Female</option>
+                            </select>
+                            <div class="genderErr error"></div>
+                          </div>
+
+
+                          <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-gradient text-white">
+                              Register
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+
+                      <!-- for multiple upload -->
+                      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <form action="/file-upload" class="mt-4">
+                          <input type="file" name="file" class="form-control" />
+
+                          <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-gradient text-white">Submit</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal -->
+          </main>
+        </section>
+    </div>
+
+
+    <script src="/formHandler/registerUser.js"></script>
+    <script src="/formHandler/deleteUser.js"></script>
+    <script src="/formHandler/upLoad.js"></script>
+
+    <%- include('../snippets/toast.ejs') %>
+      <%- include('../snippets/script.ejs') %>
+
+        <script>
+          new DataTable("#example", {
+            scrollX: true,
+          });
+        </script>
+
+        <script>
+          // Function to trigger the download of the Excel sheet
+          function downloadExcelSheet() {
+            // Replace 'path_to_your_excel_file.xlsx' with the actual path to your Excel file
+            const excelFilePath = "/templates/staff_temp";
+
+            // Create a link element
+            const link = document.createElement("a");
+            link.href = excelFilePath;
+            link.target = "_blank";
+            link.download = "Student Template.xlsx"; // Specify the desired file name
+            document.body.appendChild(link);
+
+            // Trigger the click event to start the download
+            link.click();
+
+            // Remove the link element from the DOM
+            document.body.removeChild(link);
+          }
+
+          // Function to handle file upload button click
+          function handleUploadClick() {
+            // Trigger the click event on the hidden file input element
+            document.getElementById("fileInput").click();
+          }
+
+          // Function to check if the uploaded file is in Excel format
+          function validateFile() {
+            const fileInput = document.getElementById("fileInput");
+            const fileName = fileInput.value;
+
+            // Check if the file has a valid Excel extension
+            if (fileName && /\.(xlsx|xls)$/i.test(fileName)) {
+            } else {
+              alert("Please upload a valid Excel file.");
+            }
+          }
+        </script>
+
+        <div class="hidden">
+          <strong>Total Salary:</strong> ₦<span id="total-salary"></span>
+        </div>
+
+
+        <script>
+          // Handle payment for selected or all users
+          document.getElementById('pay-selected-users').addEventListener('click', function () {
+            let totalSalary = 0;
+            const selectedUsers = [];
+
+            // Loop through all checkboxes to check if any users are selected
+            document.querySelectorAll('.select_employee').forEach((checkbox, index) => {
+              if (checkbox.checked) {
+                const salaryElement = document.querySelectorAll('.user-salary')[index];
+                const userId = salaryElement.getAttribute('data-user-id');
+                const salary = parseFloat(salaryElement.innerText);
+                totalSalary += salary;
+
+                // Add selected user's ID and salary to the array
+                selectedUsers.push({ id: userId, salary: salary });
+              }
+            });
+
+            // If no users are selected, add all users for payment
+            if (selectedUsers.length === 0) {
+              document.querySelectorAll('.user-salary').forEach((salaryEl) => {
+                const userId = salaryEl.getAttribute('data-user-id');
+                const salary = parseFloat(salaryEl.innerText);
+                totalSalary += salary;
+
+                // Add all users' ID and salary to the array
+                selectedUsers.push({ id: userId, salary: salary });
+              });
+            }
+
+            // Admin email
+            const adminEmail = '<%= context.admin.email %>'; // Get admin email from backend
+
+            const handler = PaystackPop.setup({
+              key: 'pk_test_dd3303211a783a9544575c11986d68bf1cd8f6af', // Replace with your Paystack public key
+              email: adminEmail, // Use the admin email
+              amount: totalSalary * 100, // Amount in kobo (multiply by 100 for Kobo)
+              currency: "NGN", // Nigerian Naira
+              callback: function (response) {
+                // Handle successful payment
+                alert('Payment successful! Reference: ' + response.reference);
+
+                // Prepare the payment data with selected users or all users
+                const paymentData = {
+                  refNo: response.reference, // Paystack reference number
+                  paytype: selectedUsers.length > 0 ? 'Pay Selected Users' : 'Pay All Users', // Payment type
+                  users: selectedUsers // Send users and their salaries (either selected or all)
+                };
+
+                // Send POST request to the server to save the payment
+                fetch('/admin/save-payment', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(paymentData)
+                })
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.success) {
+                      alert('Payment saved successfully for users!');
+                    } else {
+                      alert('Failed to save payment: ' + data.message);
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error while saving payment: ' + error.message);
+                  });
+              },
+              onClose: function () {
+                alert('Payment window closed.');
+              }
+            });
+
+            handler.openIframe(); // Open Paystack payment window
+          });
+        </script>
+
+       
+
+
+  </body>
+
+</html>
+

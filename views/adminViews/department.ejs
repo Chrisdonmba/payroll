@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../snippets/headers.ejs') %>
+
+  <body>
+    <div class="dash_Box">
+      <i class="fa-solid fa-list toggle_btn text-white p-3 h3 shadow"></i>
+
+      <!-- side menu -->
+      <%- include('../snippets/sidebar.ejs') %>
+
+        <!-- main section -->
+        <section class="main p-3 p-md-4">
+          <main>
+            <header class="head_nav d-md-flex justify-content-between align-items-center">
+              <a href="javascript:void(0)" class="text-decoration-none text-dark">/ Departments</a>
+              <!-- <div class="d-flex align-items-center gap-3">
+                <input type="search" name="search" id="dearch" placeholder="Search..." class="form-control" />
+                <a href="/admin/profile" class="text-decoration-none text-dark"><i class="fa-solid fa-user"></i></a>
+              </div> -->
+            </header>
+
+            <!-- data table here -->
+            <section class="data_table bg-white p-3 rounded mt-5">
+              <!-- add to payroll -->
+              <!-- <div class="add_opt">
+                <button class="btn add_btn text-white">
+                  <i class="fa-solid fa-plus"></i> Add to Pay-roll
+                </button>
+              </div> -->
+
+              <div class="table_dsp mt-5 table-responsive">
+                <table id="example" class="display" style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th><input type="checkbox" class="select_all"></th>
+                      <th>Name</th>
+                      <th>Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (context.departments) { %>
+                      <% context.departments.forEach(department=> { %>
+                    <tr>
+                      <td><input type="checkbox" class="select_employee" /></td>
+                      <td><%= department.name %></td>
+                      <td><%= department.date.toLocaleDateString() %></td>
+                      <!-- actions button -->
+                      <td class="dropdown">
+                        <span class="btn atn-btn dropdown-toggle" type="button" id="dropdownMenuButton"
+                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                        <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton">
+                          <a href="/admin/edit-department/?department_id=<%= department._id %>" type="button"
+                            class="btn btn-primary w-100">
+                            Edit
+                          </a>
+                          <br />
+                          <button type="button" class="btn btn-danger w-100 mt-2"
+                           onclick="return deleteDepartment('<%= department._id %>')"> 
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <% }) %>
+                    <% } %>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                      <th>Start date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <!-- end of table -->
+              <!-- add new employee -->
+              <div class="add_opt w-100 d-flex justify-content-end mt-5">
+                <button type="button" class="btn add_btn text-white" data-toggle="modal" data-target="#addNewEmployee">
+                  <i class="fa-solid fa-plus"></i> New Department
+                </button>
+              </div>
+              <!-- end of add new employee -->
+            </section>
+
+            <!-- form modals are grouped here -->
+
+           
+
+            <!-- new employee modal -->
+
+            <div class="modal fade" id="addNewEmployee" tabindex="-1" role="dialog" aria-labelledby="addNewEmployee"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3>Add new Department</h3>
+                  </div>
+                  <div class="modal-body">
+                    <!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home"
+                          type="button" role="tab" aria-controls="home" aria-selected="true">
+                          Single Upload
+                        </button>
+                      </li>                                            
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
+                          type="button" role="tab" aria-controls="profile" aria-selected="false">
+                          Multiple Upload
+                        </button>
+                      </li>
+                    </ul> -->
+
+                    <!-- for single upload -->
+                    <div class="tab-content" id="myTabContent">
+                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <form id="registerDepartment">
+                          <input type="text" name="name" id="name" class="form-control mt-4" placeholder="Full Name" />
+                          <div class="nameErr error"></div>
+
+                          <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-gradient text-white">
+                              Register
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal -->
+          </main>
+        </section>
+    </div>
+
+
+      <script src="/formHandler/department.js"></script>
+      <script src="/formHandler/deleteDepartment.js"></script>
+        <%- include('../snippets/toast.ejs') %>
+        <%- include('../snippets/script.ejs') %>
+
+    <script>
+      new DataTable("#example", {
+        scrollX: true,
+      });
+
+    </script>
+  </body>
+
+</html>
